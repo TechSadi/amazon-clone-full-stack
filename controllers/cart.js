@@ -5,7 +5,7 @@ import { calculateCartQuantity}
 
 export const addToCart = async (req, res) => {
     const { productId } = req.params;
-    const { quantity } = req.body;
+    const { quantity} = req.body;
     const quantityNumber = Number(quantity);
 
     // check if the product exists
@@ -34,7 +34,7 @@ export const addToCart = async (req, res) => {
         existingItem.quantity += quantityNumber;
     }
     else {
-        cart.items.push({
+        cart.items.unshift({
             product: productId,
             quantity: quantityNumber
         });

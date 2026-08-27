@@ -387,6 +387,10 @@
     top: 90px;
     left: 50%;
 
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
     transform: translate(-50%, -30px);
 
     background-color: #232f3e;
@@ -408,8 +412,6 @@
 
     z-index: 1000;
 
-    pointer-events: none;
-
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -419,4 +421,46 @@
     visibility: visible;
 
     transform: translate(-50%, 0);
+}
+
+.undo-button {
+    background-color: #febd69;
+    color: #111;
+
+    border: none;
+    border-radius: 12px;
+
+    padding: 7px 14px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.undo-button:hover {
+    background-color: #f3a847;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.undo-button:active {
+    transform: translateY(0);
+
+    box-shadow: none;
+}
+
+.undo-button:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
 }

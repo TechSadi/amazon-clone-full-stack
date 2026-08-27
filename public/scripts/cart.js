@@ -3,19 +3,39 @@ const cartToastMessage = document.querySelector(
     '.js-cart-toast-message'
 );
 
+
+const undoButton = document.querySelector('.js-undo-button');
+
 let toastTimeout;
+
+// Stores the most recently deleted Item
+let deletedItem = null;
 
 function showCartToast(message) {
 
     clearTimeout(toastTimeout);
 
+    // Make sure Undo is clickable again
+    undoButton.disabled = false;
+
     cartToastMessage.textContent = message;
     cartToast.classList.add('show');
 
     toastTimeout = setTimeout(() => {
-        cartToast.classList.remove('show');
-    }, 3000);
 
+        cartToast.classList.remove('show');
+        deletedItem = null;
+
+    }, 5000);
+
+}
+
+function hideCartToast() {
+    clearTimeout(toastTimeout);
+
+    cartToast.classList.remove('show');
+
+    deletedItem = null;
 }
 
 
@@ -102,8 +122,13 @@ document.querySelectorAll('.js-delete-button')
             try {
                 const { productId } = button.dataset;
 
+                const cartItem = document.querySelector(`.js-cart-item-${productId}`);
+
+                // Get the current quantity before deletion 
+                const quantity = Number(cartItem.querySelector(`.js-quantity-${productId}`).textContent)
+
                 // Prevent multiple clicks
-                button.disable = true;
+                button.disabled = true;
 
                 const response = await fetch(
                     `/cart/${productId}`,
@@ -115,11 +140,15 @@ document.querySelectorAll('.js-delete-button')
                 const data = await response.json();
 
                 if (!data.deleted) {
-                    button.disable = false;
+                    button.disabled = false;
                     return;
                 }
 
-                const cartItem = document.querySelector(`.js-cart-item-${productId}`);
+                // Remember the deleted item for undo
+                deletedItem = {
+                    productId,
+                    quantity
+                };
 
                 // Start smooth removal animation
                 cartItem.classList.add('removing');
@@ -177,9 +206,82 @@ document.querySelectorAll('.js-delete-button')
                     error
                 );
 
-                button.disable = false;
+                button.disabled = false;
             }
 
         });
 
     });
+
+
+
+undoButton.addEventListener('click', async () => {
+ 
+    if (!deletedItem) {
+        return;
+    }
+
+    try {
+
+        // Prevent multiple clicks
+        undoButton.disabled = true;
+
+        const { productId, quantity } = deletedItem;
+
+        console.log('Restoring item:', {
+            productId,
+            quantity
+        });
+
+        const response = await fetch(
+            `/cart/${productId}`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    quantity
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        console.log('Undo response:', data);
+
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || 'Failed to restore item'
+            );
+        }
+
+
+        if (data.added) {
+
+            clearTimeout(toastTimeout);
+
+            cartToast.classList.remove('show');
+
+            deletedItem = null;
+
+            // Reload to show the restored item
+            window.location.reload();
+        }
+
+    } catch (error) {
+
+        console.error(
+            'Undo delete error:',
+            error
+        );
+
+        // Allow user to try again
+        undoButton.disabled = false;
+
+    }
+
+});
