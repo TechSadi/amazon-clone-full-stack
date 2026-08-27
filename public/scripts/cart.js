@@ -285,3 +285,23 @@ undoButton.addEventListener('click', async () => {
     }
 
 });
+
+
+const checkoutButton = document.querySelector('.js-checkout-button');
+const checkoutLoadingOverlay = document.querySelector('.js-checkout-loading-overlay');
+
+
+checkoutButton.addEventListener( 'click', () => {
+        
+    // Prevent accidental double clicks
+    checkoutButton.disabled = true;
+
+
+    // Show loading overlay
+    checkoutLoadingOverlay.classList.add('active');
+
+    // small delay so the transition feels smooth
+        setTimeout(() => {
+            window.location.href = '/checkout';
+        }, 1200);
+})
