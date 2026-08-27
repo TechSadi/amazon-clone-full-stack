@@ -1,3 +1,24 @@
+const cartToast = document.querySelector('.js-cart-toast');
+const cartToastMessage = document.querySelector(
+    '.js-cart-toast-message'
+);
+
+let toastTimeout;
+
+function showCartToast(message) {
+
+    clearTimeout(toastTimeout);
+
+    cartToastMessage.textContent = message;
+    cartToast.classList.add('show');
+
+    toastTimeout = setTimeout(() => {
+        cartToast.classList.remove('show');
+    }, 3000);
+
+}
+
+
 document.querySelectorAll(
     '.js-increase-button, .js-decrease-button'
 ).forEach((button) => {
@@ -81,6 +102,9 @@ document.querySelectorAll('.js-delete-button')
             try {
                 const { productId } = button.dataset;
 
+                // Prevent multiple clicks
+                button.disable = true;
+
                 const response = await fetch(
                     `/cart/${productId}`,
                     {
@@ -90,18 +114,27 @@ document.querySelectorAll('.js-delete-button')
 
                 const data = await response.json();
 
-                if (data.deleted) {
+                if (!data.deleted) {
+                    button.disable = false;
+                    return;
+                }
 
-                    // Remove the product from the page
-                    document.querySelector(
-                        `.js-cart-item-${productId}`
-                    ).remove();
+                const cartItem = document.querySelector(`.js-cart-item-${productId}`);
 
+                // Start smooth removal animation
+                cartItem.classList.add('removing');
+
+                // Wait for the animation to finish
+                setTimeout(() => {
+
+                    // Remove item completely from the document
+                    cartItem.remove();
+
+                    // If cart is now empty, reload to show empty cart
                     if (data.cartQuantity === 0) {
                         window.location.reload();
                         return;
                     }
-
 
                     // Update header cart quantity
                     document.querySelector(
@@ -132,13 +165,19 @@ document.querySelectorAll('.js-delete-button')
                         '.js-right-subtotal'
                     ).textContent = data.subtotal;
 
-                }
+                    // Show confirmation toast
+                    showCartToast('Item removed from your cart');
+
+                }, 300);
+
 
             } catch (error) {
                 console.error(
                     'Delete cart item error:',
                     error
                 );
+
+                button.disable = false;
             }
 
         });

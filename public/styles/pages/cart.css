@@ -37,7 +37,19 @@
     gap: 20px;
     padding: 25px 0;
     border-bottom: 1px solid #ddd;
+
+    /* setting inital max height for cart item */
+    max-height: 500px;
+    overflow: hidden;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        max-height 0.3s ease,
+        margin 0.3s ease,
+        padding 0.3s ease;
 }
+
+
 
 .cart-item-image-container {
     display: flex;
@@ -335,4 +347,76 @@
     .cart-item-price {
         font-size: 17px;
     }
+}
+
+
+
+/* Smooth cart item removal */
+
+.cart-item {
+    overflow: hidden;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        max-height 0.3s ease,
+        margin 0.3s ease,
+        padding 0.3s ease;
+}
+
+.cart-item.removing {
+    opacity: 0;
+
+    transform: translateX(30px);
+
+    max-height: 0;
+
+    margin-top: 0;
+    margin-bottom: 0;
+
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+
+/* Cart toast notification */
+
+.cart-toast {
+    position: fixed;
+
+    top: 90px;
+    left: 50%;
+
+    transform: translate(-50%, -30px);
+
+    background-color: #232f3e;
+    color: white;
+
+    padding: 14px 22px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        visibility 0.3s ease;
+
+    z-index: 1000;
+
+    pointer-events: none;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cart-toast.show {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: translate(-50%, 0);
 }

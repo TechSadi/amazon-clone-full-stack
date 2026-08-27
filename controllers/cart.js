@@ -113,7 +113,7 @@ export const updateQuantity = async (req, res) => {
         updated: true,
         itemQuantity: cartItem.quantity,
         cartQuantity, 
-        subtotal: Math.floor(subtotal / 100)
+        subtotal: (subtotal / 100).toFixed(2)
     });
 };
 
@@ -163,6 +163,6 @@ export const deleteCartItem = async (req, res) => {
     res.json({
         deleted: true,
         cartQuantity,
-        subtotal: Math.floor(subtotal / 100)
+        subtotal: (subtotal / 100).toFixed(2)
     });
 };

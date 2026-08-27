@@ -267,7 +267,7 @@ document.querySelector('.js-place-order-button')
                 // Show success animation
                 successOverlay.classList.add('active');
 
-                // Redirect to the orders page
+                // Redirect to the orders page after 2 seconds
 
                 setTimeout(() => {
                     window.location.href = '/orders';
