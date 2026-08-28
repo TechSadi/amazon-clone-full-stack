@@ -5,7 +5,7 @@ import { calculateCartQuantity}
 
 export const addToCart = async (req, res) => {
     const { productId } = req.params;
-    const { quantity} = req.body;
+    const { quantity } = req.body;
     const quantityNumber = Number(quantity);
 
     // check if the product exists
@@ -16,11 +16,12 @@ export const addToCart = async (req, res) => {
     }
 
     // Find the existing cart
-    let cart = await Cart.findOne();
+    let cart = await Cart.findOne({ user: req.session.userId });
 
     // If no cart exists, create one 
     if (!cart) {
         cart = new Cart({
+            user: req.session.userId,
             items: []
         });
     }
@@ -52,7 +53,8 @@ export const addToCart = async (req, res) => {
 
 export const loadCart = async (req, res) => {
 
-    const cart = await Cart.findOne().populate('items.product');
+    const cart = await Cart.findOne({ user: req.session.userId })
+        .populate('items.product');
 
     if (!cart) {
         return res.render('cart/cart', {
@@ -71,7 +73,8 @@ export const updateQuantity = async (req, res) => {
     const { quantityChange } = req.body;
 
     // Find the cart
-    const cart = await Cart.findOne().populate('items.product');
+    const cart = await Cart.findOne({ user: req.session.userId })
+        .populate('items.product');
 
     if (!cart) {
         return res.status(404).json({
@@ -122,7 +125,7 @@ export const updateQuantity = async (req, res) => {
 export const deleteCartItem = async (req, res) => {
     const { productId } = req.params;
 
-    const cart = await Cart.findOne()
+    const cart = await Cart.findOne({ user: req.session.userId })
         .populate('items.product');
 
     if (!cart) {
