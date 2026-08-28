@@ -30,7 +30,7 @@ export const getAllProducts = async (req, res) => {
         products = await Product.find({});
     }
 
-    const cart = await Cart.findOne();
+    const cart = await Cart.findOne({ user: req.session.userId });
     const cartQuantity = calculateCartQuantity(cart)
 
     if (products.length === 0) {
@@ -43,8 +43,9 @@ export const getAllProducts = async (req, res) => {
 }
 
 export const showProduct = async (req, res) => {
-    const cart = await Cart.findOne();
+    const cart = await Cart.findOne({ user: req.session.userId });
     const cartQuantity = calculateCartQuantity(cart);
     const product = await Product.findById(req.params.id);
+
     res.render('products/show', { product, cartQuantity, cart});
 }
