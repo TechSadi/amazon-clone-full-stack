@@ -240,7 +240,8 @@ export const updateDeliveryOption = async (req, res) => {
 
 export const placeOrder = async (req, res) => {
     try {
-        const cart = await Cart.findOne().populate('items.product');
+        const cart = await Cart.findOne({ user: req.session.userId })
+            .populate('items.product');
 
         if (!cart) {
             return res.status(404).json({

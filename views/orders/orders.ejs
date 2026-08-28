@@ -39,16 +39,65 @@
       </div>
 
       <div class="amazon-header-right-section">
-        <a class="orders-link header-link" href="/orders">
-          <span class="returns-text">Returns</span>
-          <span class="orders-text">& Orders</span>
-        </a>
-
-        <a class="cart-link header-link" href="/cart">
-          <img class="cart-icon" src="/images/icons/cart-icon.png">
-          <div class="cart-quantity"><%= cartQuantity %></div>
-          <div class="cart-text">Cart</div>
-        </a>
+      
+        <% if (currentUser) { %>
+      
+          <div class="account-link header-link">
+      
+            <span class="returns-text">
+              Hello, <%= currentUser.name %>
+            </span>
+      
+            <form action="/users/logout" method="POST">
+              <button type="submit" class="account-action-button">
+                Sign out
+              </button>
+            </form>
+      
+          </div>
+      
+          <% } else { %>
+      
+            <a class="account-link header-link" href="/users/login">
+      
+              <span class="returns-text">
+                Hello, Guest
+              </span>
+      
+              <span class="orders-text">
+                Sign in
+              </span>
+      
+            </a>
+      
+            <% } %>
+      
+      
+              <a class="orders-link header-link" href="/orders">
+                <span class="returns-text">
+                  Returns
+                </span>
+      
+                <span class="orders-text">
+                  & Orders
+                </span>
+              </a>
+      
+      
+              <a class="cart-link header-link" href="/cart">
+      
+                <img class="cart-icon" src="/images/icons/cart-icon.png">
+      
+                <div class="cart-quantity js-cart-quantity">
+                  <%= cartQuantity %>
+                </div>
+      
+                <div class="cart-text">
+                  Cart
+                </div>
+      
+              </a>
+      
       </div>
     </div>
 
