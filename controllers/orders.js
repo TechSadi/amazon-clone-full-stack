@@ -18,7 +18,7 @@ export const loadOrders = async (req, res) => {
         
         const cart = await Cart.findOne({ user: req.session.userId });
         
-        const cartQuantity = calculateCartQuantity(cart) ? 0;
+        const cartQuantity = cart ? calculateCartQuantity(cart) : 0;
 
         res.render('orders/orders', {
             orders,
