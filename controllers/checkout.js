@@ -21,7 +21,8 @@ function getOrderTotal(totalBeforeTax, estimatedTax) {
 
 export const loadCheckout = async (req, res) => {
 
-    const cart = await Cart.findOne().populate('items.product');
+    const cart = await Cart.findOne({ user: req.session.userId })
+        .populate('items.product');
 
     if (!cart) {
         return res.status(404).json({
@@ -56,7 +57,8 @@ export const updateQuantity = async (req, res) => {
     const { productId } = req.params;
     let { newQuantity } = req.body;
 
-    const cart = await Cart.findOne().populate('items.product');
+    const cart = await Cart.findOne({ user: req.session.userId })
+        .populate('items.product');
 
     if (!cart) {
         return res.status(404).json({
@@ -106,7 +108,7 @@ export const updateQuantity = async (req, res) => {
 export const deleteCartItem = async (req, res) => {
     const { productId } = req.params;
 
-    const cart = await Cart.findOne()
+    const cart = await Cart.findOne({ user: req.session.userId })
         .populate('items.product');
 
     if (!cart) {
@@ -175,7 +177,8 @@ export const updateDeliveryOption = async (req, res) => {
             });
         }
 
-        const cart = await Cart.findOne().populate('items.product');
+        const cart = await Cart.findOne({ user: req.session.userId })
+            .populate('items.product');
 
         if (!cart) {
             return res.status(404).json({
@@ -262,6 +265,8 @@ export const placeOrder = async (req, res) => {
 
         // Create the order
         const order = await Order.create({
+            user: req.session.userId,
+            
             items: cart.items.map((item) => ({
                 product: item.product._id,
                 quantity: item.quantity,

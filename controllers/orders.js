@@ -12,12 +12,13 @@ import dayjs from 'dayjs';
 export const loadOrders = async (req, res) => {
     
     try {
-        const orders = await Order.find()
+        const orders = await Order.find({ user: req.session.userId })
             .populate('items.product')
             .sort({ createdAt: -1 });
         
-        const cart = await Cart.findOne().populate('items.product');
-        const cartQuantity = calculateCartQuantity(cart);
+        const cart = await Cart.findOne({ user: req.session.userId });
+        
+        const cartQuantity = calculateCartQuantity(cart) ? 0;
 
         res.render('orders/orders', {
             orders,
