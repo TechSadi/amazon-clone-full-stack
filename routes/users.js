@@ -4,7 +4,8 @@ import {
     loadRegister,
     loadLogin,
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
 } from '../controllers/users.js';
 
 const router = express.Router();

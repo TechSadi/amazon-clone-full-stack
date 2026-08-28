@@ -297,3 +297,22 @@ export const loginUser = async (req, res) => {
     }
 
 };
+
+
+
+export const logoutUser = (req, res) => {
+    req.session.destroy((error) => {
+
+        if (error) {
+            console.error('Logout error:', error);
+
+            return res.status(500).send(
+                'Something went wrong while logging out.'
+            );
+        }
+
+        res.clearCookie('connect.sid');
+
+        res.redirect('/products');
+    });
+};
