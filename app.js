@@ -10,6 +10,10 @@ import cartRoutes from './routes/cart.js';
 import checkoutRoutes from './routes/checkout.js'
 import ordersRoutes from './routes/orders.js'
 import orderTracking from './routes/tracking.js';
+import userRoutes from './routes/users.js';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+
 
 dotenv.config();
 
@@ -28,6 +32,20 @@ app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI
+        }),
+
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        }
+    })
+);
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,6 +64,9 @@ app.use('/orders', ordersRoutes);
 
 // order tracking routes
 app.use('/tracking', orderTracking);
+
+// user routes
+app.use('/users', userRoutes);
 
 const PORT = process.env.PORT || 3000;
 
