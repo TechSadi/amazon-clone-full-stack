@@ -12,6 +12,7 @@ import ordersRoutes from './routes/orders.js'
 import orderTracking from './routes/tracking.js';
 import userRoutes from './routes/users.js';
 import session from 'express-session';
+import User from './models/user.js';
 import MongoStore from 'connect-mongo';
 
 
@@ -46,6 +47,34 @@ app.use(
         }
     })
 );
+
+
+app.use(async (req, res, next) => {
+    try {
+
+        if (req.session.userId) {
+
+            const user = await User.findById(
+                req.session.userId
+            );
+
+            res.locals.currentUser = user;
+
+        } else {
+
+            res.locals.currentUser = null;
+
+        }
+
+        next();
+
+    } catch (error) {
+
+        next(error);
+
+    }
+});
+
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
